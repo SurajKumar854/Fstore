@@ -1,6 +1,5 @@
 package com.kyubi.retrofitexample.repository
 
-import android.app.Application
 import android.content.Context
 import android.os.Build
 import android.util.Log
@@ -9,7 +8,6 @@ import androidx.annotation.RequiresApi
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import com.kyubi.retrofitexample.db.ProductDB
-import com.kyubi.retrofitexample.helpers.UserHelper
 import com.kyubi.retrofitexample.models.Products
 import com.kyubi.retrofitexample.retrofit.RetrofitHelper
 import com.kyubi.retrofitexample.utlis.NetworkUtlis
@@ -27,7 +25,7 @@ class ProductRepository(
         if (NetworkUtlis.isOnline(context)) {
             val result = product_service.getInstance().getProductList()
             if (result?.body() != null) {
-                Log.e("results",result.body().toString())
+                Log.e("results", result.body().toString())
                 productDB.productDao().addProducts(result.body()!!)
                 productLiveData.postValue(result.body())
             }
@@ -35,6 +33,23 @@ class ProductRepository(
             val products = productDB.productDao().getProducts()
             productLiveData.postValue(products!!)
             Toast.makeText(context, "Please check your internet", Toast.LENGTH_LONG).show()
+        }
+
+    }
+
+    @RequiresApi(Build.VERSION_CODES.M)
+    suspend fun getProductsBackground() {
+        if (NetworkUtlis.isOnline(context)) {
+            val result = product_service.getInstance().getProductList()
+            if (result?.body() != null) {
+                Log.e("results", result.body().toString())
+                productDB.productDao().addProducts(result.body()!!)
+                productLiveData.postValue(result.body())
+            }
+        } else {
+            val products = productDB.productDao().getProducts()
+            productLiveData.postValue(products!!)
+            //Toast.makeText(context, "Please check your internet", Toast.LENGTH_LONG).show()
         }
 
     }
