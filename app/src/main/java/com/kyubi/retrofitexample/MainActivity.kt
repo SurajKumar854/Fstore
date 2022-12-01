@@ -30,6 +30,7 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val text: TextView = findViewById(R.id.data)
+
         val repository = (application as FStoreApplication).fstoreProductRepository
 
         mainViewModel =
