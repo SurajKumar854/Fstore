@@ -28,8 +28,9 @@ class MainActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
-
+  // Hellojj
         val text: TextView = findViewById(R.id.data)
+        //kknkj
         val repository = (application as FStoreApplication).fstoreProductRepository
 
         mainViewModel =
