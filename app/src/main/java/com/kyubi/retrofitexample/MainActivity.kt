@@ -31,7 +31,7 @@ class MainActivity : AppCompatActivity() {
 
         val text: TextView = findViewById(R.id.data)
         val repository = (application as FStoreApplication).fstoreProductRepository
-
+ // pushing code to github
         mainViewModel =
             ViewModelProvider(this, MainViewModelFactory(repository)).get(MainViewModel::class.java)
         text.text = mainViewModel.products.value?.get(0)?.category
