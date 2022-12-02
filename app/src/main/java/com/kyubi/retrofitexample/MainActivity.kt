@@ -9,6 +9,7 @@ import androidx.lifecycle.ViewModelProvider
 import androidx.lifecycle.get
 import com.kyubi.retrofitexample.helpers.UserHelper
 import com.kyubi.retrofitexample.repository.ProductRepository
+import com.kyubi.retrofitexample.repository.Response
 import com.kyubi.retrofitexample.retrofit.FStoreApi
 import com.kyubi.retrofitexample.retrofit.RetrofitHelper
 import com.kyubi.retrofitexample.retrofit.ServiceCallback
@@ -33,8 +34,27 @@ class MainActivity : AppCompatActivity() {
         val repository = (application as FStoreApplication).fstoreProductRepository
 
 
-        mainViewModel = ViewModelProvider(this, MainViewModelFactory(repository)).get(MainViewModel::class.java)
-        text.text = mainViewModel.products.value?.get(0)?.category
+        mainViewModel =
+            ViewModelProvider(this, MainViewModelFactory(repository)).get(MainViewModel::class.java)
+        mainViewModel.products.observe(this) {
+            when (it) {
+                is Response.Loading -> {
+                    text.text = "Loading...."
+                    Log.e("Load", "going on....")
+                }
+                is Response.Success -> {
+                    it.data.let {
+                        text.text = it?.get(0)?.category!!
+                    }
+
+                }
+
+                is Response.Error -> {
+                    text.text = it.errorMessage
+                }
+            }
+        }
+        /*   text.text = mainViewModel.products.value?.get(0)?.category!!*/
         /*   mainViewModel.products.observe(this) {
 
                text.text = it[0].category

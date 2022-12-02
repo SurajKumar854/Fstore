@@ -5,6 +5,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.kyubi.retrofitexample.models.Products
 import com.kyubi.retrofitexample.repository.ProductRepository
+import com.kyubi.retrofitexample.repository.Response
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 
@@ -17,6 +18,6 @@ class MainViewModel(private val repository: ProductRepository) : ViewModel() {
 
     }
 
-    val products: LiveData<List<Products>>
+    val products: LiveData<Response<List<Products>>>
         get() = repository.products
 }

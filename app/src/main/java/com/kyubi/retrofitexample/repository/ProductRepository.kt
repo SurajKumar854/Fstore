@@ -16,22 +16,33 @@ class ProductRepository(
     private val product_service: RetrofitHelper,
     private val productDB: ProductDB, private val context: Context
 ) {
-    private val productLiveData = MutableLiveData<List<Products>>()
-    val products: LiveData<List<Products>>
+    // without response handling
+/*    private val productLiveData = MutableLiveData<List<Products>>()*/
+    private val productLiveData = MutableLiveData<Response<List<Products>>>()
+    val products: LiveData<Response<List<Products>>>
         get() = productLiveData
 
     @RequiresApi(Build.VERSION_CODES.M)
     suspend fun getProductList() {
         if (NetworkUtlis.isOnline(context)) {
-            val result = product_service.getInstance().getProductList()
-            if (result?.body() != null) {
-                Log.e("results", result.body().toString())
-                productDB.productDao().addProducts(result.body()!!)
-                productLiveData.postValue(result.body())
+
+            try {
+                productLiveData.postValue(Response.Loading())
+                val result = product_service.getInstance().getProductList()
+                if (result?.body() != null) {
+                    Log.e("results", result.body().toString())
+                    productDB.productDao().addProducts(result.body()!!)
+                    productLiveData.postValue(Response.Success(result.body()!!))
+                } else {
+                    productLiveData.postValue(Response.Error("Error has been occurred.. Please check your server"))
+                }
+            } catch (e: java.lang.Exception) {
+                productLiveData.postValue(Response.Error(e.message.toString()))
             }
+
         } else {
             val products = productDB.productDao().getProducts()
-            productLiveData.postValue(products!!)
+            productLiveData.postValue(Response.Success(products))
             Toast.makeText(context, "Please check your internet", Toast.LENGTH_LONG).show()
         }
 
@@ -44,11 +55,11 @@ class ProductRepository(
             if (result?.body() != null) {
                 Log.e("results", result.body().toString())
                 productDB.productDao().addProducts(result.body()!!)
-                productLiveData.postValue(result.body())
+                productLiveData.postValue(Response.Success(result.body()!!))
             }
         } else {
             val products = productDB.productDao().getProducts()
-            productLiveData.postValue(products!!)
+            productLiveData.postValue(Response.Success(products!!))
             //Toast.makeText(context, "Please check your internet", Toast.LENGTH_LONG).show()
         }
 

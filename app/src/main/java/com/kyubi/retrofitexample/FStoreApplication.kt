@@ -1,5 +1,6 @@
 package com.kyubi.retrofitexample
 
+import android.annotation.SuppressLint
 import android.app.Application
 import androidx.work.Constraints
 import androidx.work.NetworkType
@@ -26,6 +27,7 @@ class FStoreApplication : Application() {
 
     }
 
+    @SuppressLint("InvalidPeriodicWorkRequestInterval")
     private fun setUpWork() {
         val constraint = Constraints.Builder().setRequiredNetworkType(NetworkType.CONNECTED).build()
         val workerRequest =
